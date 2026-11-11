@@ -15,7 +15,7 @@ public class MyExceptionHandler : IExceptionHandler
         await httpContext.Response.WriteAsJsonAsync(
             new ProblemDetails()
             {
-                Title = exception.Message,
+                Title = exception.Message
             },
             cancellationToken);
 
