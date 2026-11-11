@@ -12,6 +12,9 @@ builder.Services.AddScoped<Seeder>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApiDocument();
 
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<MyExceptionHandler>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -19,6 +22,8 @@ using (var scope = app.Services.CreateScope())
     var seeder = scope.ServiceProvider.GetService<Seeder>();
     seeder.Seed();
 }
+
+app.UseExceptionHandler();
 
 app.MapControllers();
 app.UseOpenApi();
