@@ -10,9 +10,7 @@ var options = new DataOptions<MyDatabaseConnection>(
 
 builder.Services.AddScoped<MyDatabaseConnection>(_ => new MyDatabaseConnection(options));
 builder.Services.AddScoped<Seeder>();
-
 builder.Services.AddScoped<IPasswordHasher, Argon2PasswordHasher>();
-
 builder.Services.AddControllers();
 builder.Services.AddOpenApiDocument();
 

@@ -13,4 +13,3 @@ public partial class CreateUserRequestDto
 {
     public string Password { get; set; }
 }
-    

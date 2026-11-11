@@ -15,9 +15,9 @@ public class Argon2PasswordHasher : IPasswordHasher
         argon2.MemorySize = 64 * 1024;
         argon2.Iterations = 3;
         argon2.DegreeOfParallelism = 4;
-        
-        string hash = Convert.ToBase64String(argon2.GetBytes(32));
 
+        string hash = Convert.ToBase64String(
+            argon2.GetBytes(32));
         return $"{hash}.{salt}";
     }
 
@@ -25,20 +25,21 @@ public class Argon2PasswordHasher : IPasswordHasher
     {
         var salt = RandomNumberGenerator.GetBytes(16);
         
-        return HashPassword(password, Convert.ToBase64String(salt));
+        return HashPassword(
+            password, Convert.ToBase64String(salt));
     }
 
     public bool VerifyHashedPassword(
-        string password, 
+        string password,
         string hashedPassword)
     {
         string[] parts = hashedPassword.Split('.');
-
+        
         string hash = parts[0];
         string salt = parts[1];
 
-        string newHashedPassword = HashPassword(password, salt);
-        
+        string newHashedPassword =
+            HashPassword(password, salt);
         return newHashedPassword == hashedPassword;
     }
 }
