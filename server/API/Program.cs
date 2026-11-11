@@ -1,6 +1,7 @@
 using API.Utils;
 using Infra;
 using LinqToDB;
+using Service.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,9 @@ var options = new DataOptions<MyDatabaseConnection>(
 
 builder.Services.AddScoped<MyDatabaseConnection>(_ => new MyDatabaseConnection(options));
 builder.Services.AddScoped<Seeder>();
+
+builder.Services.AddScoped<IPasswordHasher, Argon2PasswordHasher>();
+
 builder.Services.AddControllers();
 builder.Services.AddOpenApiDocument();
 
