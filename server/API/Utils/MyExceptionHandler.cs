@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
+namespace API.Utils;
+
 public class MyExceptionHandler : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(
@@ -13,9 +15,10 @@ public class MyExceptionHandler : IExceptionHandler
         await httpContext.Response.WriteAsJsonAsync(
             new ProblemDetails()
             {
-                Title = exception.Message
+                Title = exception.Message,
             },
             cancellationToken);
+
         return true;
     }
 }
