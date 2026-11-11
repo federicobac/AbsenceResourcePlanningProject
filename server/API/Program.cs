@@ -11,6 +11,8 @@ builder.Services.AddScoped<MyDatabaseConnection>(_ => new MyDatabaseConnection(o
 builder.Services.AddScoped<Seeder>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApiDocument();
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<MyExceptionHandler>();
 
 var app = builder.Build();
 
@@ -20,6 +22,7 @@ using (var scope = app.Services.CreateScope())
     seeder.Seed();
 }
 
+app.UseExceptionHandler();
 app.MapControllers();
 app.UseOpenApi();
 app.UseSwaggerUi();
