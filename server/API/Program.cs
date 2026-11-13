@@ -1,4 +1,3 @@
-using API.Extensions;
 using API.Utils;
 using Infra;
 using LinqToDB;
@@ -10,15 +9,20 @@ var builder = WebApplication.CreateBuilder(args);
 var options = new DataOptions<MyDatabaseConnection>(
     new DataOptions().UseSQLite("Data Source=../Infra/db.db"));
 
-var jwtSettings = builder.Configuration.GetSection(JwtSettings.SectionName)
+var jwtSettings = builder.Configuration
+    .GetSection(JwtSettings.SectionName)
     .Get<JwtSettings>() ?? new JwtSettings();
+
 jwtSettings.Validate();
 
-builder.Services.AddJwtAutentication(jwtSettings);
+builder.Services.AddJwtAuthentication(jwtSettings);
 builder.Services.AddAuthorization();
+
 builder.Services.AddScoped<MyDatabaseConnection>(_ => new MyDatabaseConnection(options));
 builder.Services.AddScoped<Seeder>();
+
 builder.Services.AddServiceLayer(jwtSettings);
+
 builder.Services.AddControllers();
 builder.Services.AddOpenApiDocumentation();
 

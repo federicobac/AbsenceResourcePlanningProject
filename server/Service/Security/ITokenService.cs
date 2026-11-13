@@ -2,7 +2,7 @@
 
 namespace Service.Security;
 
-public class ITokenService
+public interface ITokenService
 {
     string CreateToken(User user);
 }

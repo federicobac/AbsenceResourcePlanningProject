@@ -5,7 +5,8 @@ namespace API.Extensions;
 
 public static class OpenApiExtensions
 {
-    public static IServiceCollection AddOpenApiDocumentation(this IServiceCollection services)
+    public static IServiceCollection AddOpenApiDocumentation(
+        this IServiceCollection services)
     {
         services.AddOpenApiDocument(document =>
         {
@@ -18,6 +19,7 @@ public static class OpenApiExtensions
                         BearerFormat = "JWT",
                         Description = "Enter your JWT bearer token"
                     }));
+
             document.OperationProcessors.Add(
                 new AspNetCoreOperationSecurityScopeProcessor("Bearer"));
         });

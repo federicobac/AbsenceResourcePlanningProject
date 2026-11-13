@@ -19,7 +19,7 @@ public static class ServiceCollectionExtensions
         // Application services
 
         services.AddScoped<UserService>();
-        
+
         return services;
     }
 }
