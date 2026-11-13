@@ -1,6 +1,8 @@
+using API.Extensions;
 using API.Utils;
 using Infra;
 using LinqToDB;
+using Service;
 using Service.Security;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,11 +10,22 @@ var builder = WebApplication.CreateBuilder(args);
 var options = new DataOptions<MyDatabaseConnection>(
     new DataOptions().UseSQLite("Data Source=../Infra/db.db"));
 
+var jwtSettings = builder.Configuration
+    .GetSection(JwtSettings.SectionName)
+    .Get<JwtSettings>() ?? new JwtSettings();
+
+jwtSettings.Validate();
+
+builder.Services.AddJwtAuthentication(jwtSettings);
+builder.Services.AddAuthorization();
+
 builder.Services.AddScoped<MyDatabaseConnection>(_ => new MyDatabaseConnection(options));
 builder.Services.AddScoped<Seeder>();
-builder.Services.AddScoped<IPasswordHasher, Argon2PasswordHasher>();
+
+builder.Services.AddServiceLayer(jwtSettings);
+
 builder.Services.AddControllers();
-builder.Services.AddOpenApiDocument();
+builder.Services.AddOpenApiDocumentation();
 
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<MyExceptionHandler>();
@@ -26,6 +39,9 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseExceptionHandler();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 app.UseOpenApi();
