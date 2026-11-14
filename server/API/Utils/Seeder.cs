@@ -1,6 +1,5 @@
 ﻿using Infra;
 using LinqToDB;
-using Namotion.Reflection;
 using Service.Security;
 
 namespace API.Utils;
@@ -39,7 +38,7 @@ public class Seeder(
             {
                 UserId = Guid.NewGuid().ToString(),
                 Username = "employee",
-                PasswordHash = passwordHasher.HashAndSaltPassword(accountantPassword),
+                PasswordHash = passwordHasher.HashAndSaltPassword(employeePassword),
                 Role = UserRoles.Employee
             });
         }
