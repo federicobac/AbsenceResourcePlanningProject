@@ -5,6 +5,7 @@ using Service;
 using Service.RequestDtos;
 
 namespace API.Controllers;
+
 [ApiController]
 [Route("api/[controller]")]
 public class UserController(UserService service) : ControllerBase
@@ -23,19 +24,16 @@ public class UserController(UserService service) : ControllerBase
     [HttpGet("me")]
     public ActionResult<UserDto> Me()
     {
-        var userId =
-            User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (userId is null)
             return Unauthorized();
         
-        var user =
-            service.GetById(userId);
+        var user = service.GetById(userId);
+
         if (user is null)
             return Unauthorized();
         
         return Ok(user);
     }
-    
-    
 }

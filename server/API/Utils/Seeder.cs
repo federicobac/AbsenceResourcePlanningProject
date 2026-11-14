@@ -28,7 +28,7 @@ public class Seeder(
             });
         }
 
-        
+
 
         var employeePassword = configuration["SeedEmployee:Password"];
 
