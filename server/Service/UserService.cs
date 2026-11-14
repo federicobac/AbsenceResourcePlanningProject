@@ -1,4 +1,6 @@
-﻿using Infra;
+﻿using System.ComponentModel.DataAnnotations;
+using Infra;
+using LinqToDB;
 using Service.RequestDtos;
 using Service.Security;
 
@@ -39,5 +41,69 @@ public class UserService(
         return user is null
             ? null
             : new UserDto(user);
+    }
+
+    public List<UserDto> GetUsers()
+    {
+        return db.Users
+            .Select(u => new UserDto(u))
+            .ToList();
+    }
+    
+    public UserDto CreateUser(CreateUserRequestDto dto)
+    {
+        if (string.IsNullOrWhiteSpace(dto.Username))
+            throw new ValidationException("Username is required");
+        
+        if (string.IsNullOrWhiteSpace(dto.Password))
+            throw new ValidationException("Password is required");
+        
+        if (string.IsNullOrWhiteSpace(dto.Role))
+            throw new ValidationException("Role is required");
+        
+        if (db.Users.Any(u => u.Username == dto.Username))
+            throw new ValidationException("Username already exists");
+
+        string passwordHash = passwordHasher.HashAndSaltPassword(dto.Password);
+
+        var user = new User()
+        {
+            UserId = Guid.NewGuid().ToString(),
+            Username = dto.Username,
+            PasswordHash = passwordHash,
+            Role = dto.Role
+        };
+        db.Insert(user);
+        return new UserDto(user);
+    }
+
+    public UserDto UpdateUser(
+        string id, 
+        UpdateUserRequestDto dto)
+    {
+        if (string.IsNullOrWhiteSpace(dto.Username))
+            throw new ValidationException("Username is required");
+
+        var user = db.Users
+            .FirstOrDefault(u => u.UserId == id);
+        
+        if (user is null)
+            throw new ValidationException("User not found");
+
+        user.Username = dto.Username;
+        
+        db.Update(user);
+        return new UserDto(user);
+    }
+
+    public void DeleteUser(string id)
+    {
+        var user = db.Users
+            .FirstOrDefault(u => u.UserId == id);
+
+        if (user is null)
+            throw new ValidationException("User not found");
+        
+        db.Delete(user);
     }
 }
