@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service;
 using Service.RequestDtos;
+using Service.Security;
 
 namespace API.Controllers;
 
@@ -35,5 +36,34 @@ public class UserController(UserService service) : ControllerBase
             return Unauthorized();
         
         return Ok(user);
+    }
+
+    [Authorize]
+    [HttpGet(nameof(GetUsers))]
+    public List<UserDto> GetUsers()
+    {
+        return service.GetUsers();
+    }
+
+    [Authorize(Roles = UserRoles.Admin)]
+    [HttpPost(nameof(CreateUser))]
+    public UserDto CreateUser(CreateUserRequestDto dto)
+    {
+        return service.CreateUser(dto);
+    }
+
+    [Authorize(Roles = UserRoles.Admin)]
+    [HttpPut("{id}")]
+    public UserDto UpdateUser(string id, UpdateUserRequestDto dto)
+    {
+        return service.UpdateUser(id, dto);
+    }
+
+    [Authorize(Roles = UserRoles.Admin)]
+    [HttpDelete("{id}")]
+    public ActionResult<UserDto> DeleteUser(string id)
+    {
+        service.DeleteUser(id);
+        return NoContent();
     }
 }
