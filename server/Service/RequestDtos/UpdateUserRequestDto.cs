@@ -7,12 +7,8 @@ namespace Service.RequestDtos;
 [
     nameof(User.UserId),
     nameof(User.PasswordHash)
-    
-    
 ])]
 public partial class UpdateUserRequestDto
-
 {
-public string? Password { get; set; }
-
+    public string? Password { get; set; }
 }

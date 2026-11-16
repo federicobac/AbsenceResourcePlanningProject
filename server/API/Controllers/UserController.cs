@@ -38,12 +38,13 @@ public class UserController(UserService service) : ControllerBase
         return Ok(user);
     }
 
-    [Authorize(Roles = nameof(UserRoles.Admin))]
+    [Authorize(Roles = UserRoles.Admin)]
     [HttpGet(nameof(GetUsers))]
     public List<UserDto> GetUsers()
     {
         return service.GetUsers();
     }
+
 
     [Authorize(Roles = UserRoles.Admin)]
     [HttpPost(nameof(CreateUser))]
@@ -54,14 +55,16 @@ public class UserController(UserService service) : ControllerBase
 
     [Authorize(Roles = UserRoles.Admin)]
     [HttpPut("{id}")]
-    public UserDto UpdateUser(string id, UpdateUserRequestDto dto)
+    public UserDto UpdateUser(
+        string id,
+        UpdateUserRequestDto dto)
     {
         return service.UpdateUser(id, dto);
     }
 
     [Authorize(Roles = UserRoles.Admin)]
     [HttpDelete("{id}")]
-    public ActionResult<UserDto> DeleteUser(string id)
+    public IActionResult DeleteUser(string id)
     {
         service.DeleteUser(id);
         return NoContent();
