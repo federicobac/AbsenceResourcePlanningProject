@@ -13,6 +13,21 @@ public class Seeder(
     {
         db.CreateTable<User>(tableOptions: TableOptions.CreateIfNotExists);
 
+        var adminPassword = configuration["SeedAdmin:Password"];
+
+        if (!string.IsNullOrEmpty(adminPassword) &&
+            !db.Users.Any(u => u.Username == "admin"))
+        {
+            db.Insert(new User
+            {
+                UserId = Guid.NewGuid().ToString(),
+                Username = "admin",
+                PasswordHash =
+                    passwordHasher.HashAndSaltPassword(adminPassword),
+                Role = UserRoles.Admin
+            });
+        }
+        
         var accountantPassword = configuration["SeedAccountant:Password"];
 
         if (!string.IsNullOrEmpty(accountantPassword) &&
