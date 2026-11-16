@@ -10,5 +10,5 @@ namespace Service.RequestDtos;
 ])]
 public partial class UpdateUserRequestDto
 {
-    public string Password { get; set; }
+    public string? Password { get; set; }
 }

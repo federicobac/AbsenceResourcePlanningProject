@@ -81,16 +81,29 @@ public class UserService(
         string id, 
         UpdateUserRequestDto dto)
     {
-        if (string.IsNullOrWhiteSpace(dto.Username))
-            throw new ValidationException("Username is required");
-
         var user = db.Users
             .FirstOrDefault(u => u.UserId == id);
         
         if (user is null)
             throw new ValidationException("User not found");
+        
+        if (string.IsNullOrWhiteSpace(dto.Username))
+            throw new ValidationException("Username is required");
+        
+        if (db.Users.Any(u => u.Username == dto.Username && u.UserId != id))
+            throw new ValidationException("Username already exists");
+        
+        if (string.IsNullOrWhiteSpace(dto.Role))
+            throw new ValidationException("Role is required");
 
         user.Username = dto.Username;
+        user.Role = dto.Role;
+
+        // Only update password if a new one was provided
+        if (!string.IsNullOrWhiteSpace(dto.Password))
+        {
+            user.PasswordHash = passwordHasher.HashAndSaltPassword(dto.Password);
+        }
         
         db.Update(user);
         return new UserDto(user);
