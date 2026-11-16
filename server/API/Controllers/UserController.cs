@@ -38,7 +38,7 @@ public class UserController(UserService service) : ControllerBase
         return Ok(user);
     }
 
-    [Authorize]
+    [Authorize(Roles = nameof(UserRoles.Admin))]
     [HttpGet(nameof(GetUsers))]
     public List<UserDto> GetUsers()
     {
