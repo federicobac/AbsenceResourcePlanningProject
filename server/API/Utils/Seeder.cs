@@ -14,48 +14,52 @@ public class Seeder(
         db.CreateTable<User>(tableOptions: TableOptions.CreateIfNotExists);
 
         var adminPassword = configuration["SeedAdmin:Password"];
+        var adminEmail = configuration["SeedAdmin:Email"];
 
         if (!string.IsNullOrEmpty(adminPassword) &&
+            !string.IsNullOrEmpty(adminEmail) &&
             !db.Users.Any(u => u.Username == "admin"))
         {
             db.Insert(new User
             {
                 UserId = Guid.NewGuid().ToString(),
                 Username = "admin",
-                PasswordHash =
-                    passwordHasher.HashAndSaltPassword(adminPassword),
+                Email = adminEmail,
+                PasswordHash = passwordHasher.HashAndSaltPassword(adminPassword),
                 Role = UserRoles.Admin
             });
         }
-        
+
         var accountantPassword = configuration["SeedAccountant:Password"];
+        var accountantEmail = configuration["SeedAccountant:Email"];
 
         if (!string.IsNullOrEmpty(accountantPassword) &&
+            !string.IsNullOrEmpty(accountantEmail) &&
             !db.Users.Any(u => u.Username == "accountant"))
         {
             db.Insert(new User
             {
                 UserId = Guid.NewGuid().ToString(),
                 Username = "accountant",
-                PasswordHash =
-                    passwordHasher.HashAndSaltPassword(accountantPassword),
+                Email = accountantEmail,
+                PasswordHash = passwordHasher.HashAndSaltPassword(accountantPassword),
                 Role = UserRoles.Accountant
             });
         }
 
-
-
         var employeePassword = configuration["SeedEmployee:Password"];
+        var employeeEmail = configuration["SeedEmployee:Email"];
 
         if (!string.IsNullOrEmpty(employeePassword) &&
+            !string.IsNullOrEmpty(employeeEmail) &&
             !db.Users.Any(u => u.Username == "employee"))
         {
             db.Insert(new User
             {
                 UserId = Guid.NewGuid().ToString(),
                 Username = "employee",
-                PasswordHash =
-                    passwordHasher.HashAndSaltPassword(employeePassword),
+                Email = employeeEmail,
+                PasswordHash = passwordHasher.HashAndSaltPassword(employeePassword),
                 Role = UserRoles.Employee
             });
         }
