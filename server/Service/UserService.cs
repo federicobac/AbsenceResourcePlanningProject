@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using System.Net.Mail;
 using Infra;
 using LinqToDB;
 using Service.RequestDtos;
@@ -10,8 +12,6 @@ public class UserService(
     IPasswordHasher passwordHasher,
     ITokenService tokenService)
 {
-
-
     public LoginResponseDto? Login(LoginRequestDto loginRequestDto)
     {
         var user = db.Users
@@ -55,6 +55,11 @@ public class UserService(
     {
         if (string.IsNullOrWhiteSpace(dto.Username))
             throw new ValidationException("Username is required");
+        
+        string email = ValidateEmail(dto.Email);
+
+        if (db.Users.Any(u => u.Email != null && u.Email.ToLower() == email))
+            throw new ValidationException("Email already exists");
 
         if (string.IsNullOrWhiteSpace(dto.Password))
             throw new ValidationException("Password is required");
@@ -71,6 +76,7 @@ public class UserService(
         {
             UserId = Guid.NewGuid().ToString(),
             Username = dto.Username,
+            Email = email,
             PasswordHash = passwordHash,
             Role = dto.Role
         };
@@ -97,6 +103,14 @@ public class UserService(
         user.Username = dto.Username;
         user.Role = dto.Role;
 
+        string email = ValidateEmail(dto.Email);
+        
+        if (db.Users.Any(u => 
+                u.Email != null && 
+                u.Email.ToLower() == email &&
+                u.UserId != id))
+            throw new ValidationException("Email already exists");
+        
         // Only update password if a new one was provided
         if (!string.IsNullOrWhiteSpace(dto.Password))
         {
@@ -116,5 +130,31 @@ public class UserService(
             throw new ValidationException("User not found");
 
         db.Delete(user);
+    }
+
+    private static string ValidateEmail(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            throw new ValidationException("Email is required");
+
+        email = email.Trim();
+
+        try
+        {
+            var address = new MailAddress(email);
+
+            if (!address.Address.Equals(email, StringComparison.OrdinalIgnoreCase) ||
+                !address.Host.Equals("businessesbjerg.com", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ValidationException(
+                    "Email must belong to @businessesbjerg.com");
+            }
+        }
+        catch (FormatException)
+        {
+            throw new ValidationException("Invalid email format");
+        }
+
+        return email.ToLowerInvariant();
     }
 }
