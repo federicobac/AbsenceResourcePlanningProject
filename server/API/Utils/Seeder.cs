@@ -17,7 +17,7 @@ public class Seeder(
         var adminEmail = configuration["SeedAdmin:Email"];
 
         if (!string.IsNullOrEmpty(adminPassword) &&
-            !string.IsNullOrEmpty(adminEmail) &&
+            !string.IsNullOrEmpty(adminPassword) &&
             !db.Users.Any(u => u.Username == "admin"))
         {
             db.Insert(new User
@@ -25,16 +25,17 @@ public class Seeder(
                 UserId = Guid.NewGuid().ToString(),
                 Username = "admin",
                 Email = adminEmail,
-                PasswordHash = passwordHasher.HashAndSaltPassword(adminPassword),
+                PasswordHash =
+                    passwordHasher.HashAndSaltPassword(adminPassword),
                 Role = UserRoles.Admin
             });
         }
-
+        
         var accountantPassword = configuration["SeedAccountant:Password"];
         var accountantEmail = configuration["SeedAccountant:Email"];
-
+        
         if (!string.IsNullOrEmpty(accountantPassword) &&
-            !string.IsNullOrEmpty(accountantEmail) &&
+            !string.IsNullOrEmpty(accountantPassword) &&
             !db.Users.Any(u => u.Username == "accountant"))
         {
             db.Insert(new User
@@ -42,16 +43,17 @@ public class Seeder(
                 UserId = Guid.NewGuid().ToString(),
                 Username = "accountant",
                 Email = accountantEmail,
-                PasswordHash = passwordHasher.HashAndSaltPassword(accountantPassword),
+                PasswordHash =
+                    passwordHasher.HashAndSaltPassword(accountantPassword),
                 Role = UserRoles.Accountant
             });
         }
-
+        
         var employeePassword = configuration["SeedEmployee:Password"];
         var employeeEmail = configuration["SeedEmployee:Email"];
 
         if (!string.IsNullOrEmpty(employeePassword) &&
-            !string.IsNullOrEmpty(employeeEmail) &&
+            !string.IsNullOrEmpty(employeePassword) &&
             !db.Users.Any(u => u.Username == "employee"))
         {
             db.Insert(new User
@@ -59,7 +61,8 @@ public class Seeder(
                 UserId = Guid.NewGuid().ToString(),
                 Username = "employee",
                 Email = employeeEmail,
-                PasswordHash = passwordHasher.HashAndSaltPassword(employeePassword),
+                PasswordHash =
+                    passwordHasher.HashAndSaltPassword(employeePassword),
                 Role = UserRoles.Employee
             });
         }

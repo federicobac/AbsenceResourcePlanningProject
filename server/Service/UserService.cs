@@ -12,8 +12,6 @@ public class UserService(
     IPasswordHasher passwordHasher,
     ITokenService tokenService)
 {
-
-
     public LoginResponseDto? Login(LoginRequestDto loginRequestDto)
     {
         var user = db.Users
@@ -57,6 +55,11 @@ public class UserService(
     {
         if (string.IsNullOrWhiteSpace(dto.Username))
             throw new ValidationException("Username is required");
+        
+        string email = ValidateEmail(dto.Email);
+
+        if (db.Users.Any(u => u.Email != null && u.Email.ToLower() == email))
+            throw new ValidationException("Email already exists");
 
         if (string.IsNullOrWhiteSpace(dto.Password))
             throw new ValidationException("Password is required");
@@ -68,11 +71,6 @@ public class UserService(
             throw new ValidationException("Username already exists");
 
         string passwordHash = passwordHasher.HashAndSaltPassword(dto.Password);
-        
-        string email = ValidateEmail(dto.Email);
-        
-        if (db.Users.Any(u => u.Email != null && u.Email.ToLower() == email))
-            throw new ValidationException("Email already exists");
 
         var user = new User()
         {
@@ -104,18 +102,20 @@ public class UserService(
 
         user.Username = dto.Username;
         user.Role = dto.Role;
-        
-        string email = ValidateEmail(dto.Email);
-        if (db.Users.Any(u => u.Email != null && u.Email.ToLower() == email && u.UserId != id))
-            throw new ValidationException("Email already exists");
 
+        string email = ValidateEmail(dto.Email);
+        
+        if (db.Users.Any(u => 
+                u.Email != null && 
+                u.Email.ToLower() == email &&
+                u.UserId != id))
+            throw new ValidationException("Email already exists");
+        
         // Only update password if a new one was provided
         if (!string.IsNullOrWhiteSpace(dto.Password))
         {
             user.PasswordHash = passwordHasher.HashAndSaltPassword(dto.Password);
-            user.Email = email;
         }
-        
 
         db.Update(user);
         return new UserDto(user);
@@ -131,11 +131,11 @@ public class UserService(
 
         db.Delete(user);
     }
-    
+
     private static string ValidateEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
-            throw new ValidationException("email is required");
+            throw new ValidationException("Email is required");
 
         email = email.Trim();
 
@@ -152,8 +152,9 @@ public class UserService(
         }
         catch (FormatException)
         {
-            throw new ValidationException("Email is invalid");
+            throw new ValidationException("Invalid email format");
         }
+
         return email.ToLowerInvariant();
     }
 }
