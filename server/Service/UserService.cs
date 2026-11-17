@@ -64,9 +64,6 @@ public class UserService(
         if (string.IsNullOrWhiteSpace(dto.Password))
             throw new ValidationException("Password is required");
 
-        if (string.IsNullOrWhiteSpace(dto.Role))
-            throw new ValidationException("Role is required");
-
         if (db.Users.Any(u => u.Username == dto.Username))
             throw new ValidationException("Username already exists");
 
@@ -78,7 +75,7 @@ public class UserService(
             Username = dto.Username,
             Email = email,
             PasswordHash = passwordHash,
-            Role = dto.Role
+            Role = UserRoles.Employee
         };
         db.Insert(user);
         return new UserDto(user);
@@ -101,8 +98,6 @@ public class UserService(
             throw new ValidationException("Username already exists");
 
         user.Username = dto.Username;
-        user.Role = dto.Role;
-        
 
         string email = ValidateEmail(dto.Email);
         
@@ -111,8 +106,8 @@ public class UserService(
                 u.Email.ToLower() == email &&
                 u.UserId != id))
             throw new ValidationException("Email already exists");
-        
-        user.Email = dto.Email;
+
+        user.Email = email;
         
         // Only update password if a new one was provided
         if (!string.IsNullOrWhiteSpace(dto.Password))
