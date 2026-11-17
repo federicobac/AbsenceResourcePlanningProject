@@ -102,6 +102,7 @@ public class UserService(
 
         user.Username = dto.Username;
         user.Role = dto.Role;
+        
 
         string email = ValidateEmail(dto.Email);
         
@@ -110,6 +111,8 @@ public class UserService(
                 u.Email.ToLower() == email &&
                 u.UserId != id))
             throw new ValidationException("Email already exists");
+        
+        user.Email = dto.Email;
         
         // Only update password if a new one was provided
         if (!string.IsNullOrWhiteSpace(dto.Password))
