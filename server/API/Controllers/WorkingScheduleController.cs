@@ -12,7 +12,7 @@ namespace API.Controllers;
 public class WorkingScheduleController(WorkingScheduleService service) : ControllerBase
 {
     [HttpGet("{userId}")]
-    public List<WorkingScheduleDto> GetSchedule(string userId)
+    public List<WorkingScheduleDto> GetSchedules(string userId)
     {
         return service.GetSchedules(userId);
     }

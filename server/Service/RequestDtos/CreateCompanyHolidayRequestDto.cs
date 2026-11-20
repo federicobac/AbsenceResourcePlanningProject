@@ -8,5 +8,5 @@ namespace Service.RequestDtos;
     [
         nameof(HolidayDate.HolidayDateId),
         nameof(HolidayDate.Type)
-    ])] 
+    ])]
 public partial class CreateCompanyHolidayRequestDto;

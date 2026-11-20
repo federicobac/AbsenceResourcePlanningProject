@@ -79,7 +79,7 @@ public class WorkingScheduleService(MyDatabaseConnection db)
             ThursdayTo = dto.ThursdayTo,
 
             FridayFrom = dto.FridayFrom,
-            FridayTo = dto.FridayTo,
+            FridayTo = dto.FridayTo
         };
     }
 
@@ -106,7 +106,7 @@ public class WorkingScheduleService(MyDatabaseConnection db)
                 dto.ValidFrom <= previous.ValidUntil.Value) 
                 throw new ValidationException("New schedule overlaps the previous schedule");
         }
-        
+
         var schedule = CreateEntity(userId, dto);
 
         if (previous != null)
@@ -144,5 +144,4 @@ public class WorkingScheduleService(MyDatabaseConnection db)
             .Select(s => new WorkingScheduleDto(s))
             .ToList();
     }
-    
 }

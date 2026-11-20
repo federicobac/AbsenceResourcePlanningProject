@@ -28,20 +28,19 @@ public class HolidayDateController(HolidayDateService service) : ControllerBase
 
     [Authorize(Roles = UserRoles.Admin)]
     [HttpPost("company")]
-    public HolidayDateDto CreateCompanyHoliday(CreateCompanyHolidayRequestDto dto)
+    public HolidayDateDto CreateCompanyHoliday(
+        CreateCompanyHolidayRequestDto dto)
     {
         return service.CreateCompanyHoliday(dto);
     }
 
     [Authorize(Roles = UserRoles.Admin)]
     [HttpPut("company/{id}")]
-    public HolidayDateDto UpdateCompanyHoliday(
-        string id,
-        UpdateCompanyHolidayRequestDto dto)
+    public HolidayDateDto UpdateCompanyHoliday(string id, UpdateCompanyHolidayRequestDto dto)
     {
         return service.UpdateCompanyHoliday(id, dto);
     }
-    
+
     [Authorize(Roles = UserRoles.Admin)]
     [HttpDelete("company/{id}")]
     public IActionResult DeleteCompanyHoliday(string id)

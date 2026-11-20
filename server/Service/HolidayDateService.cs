@@ -71,9 +71,7 @@ public class HolidayDateService(
         if (string.IsNullOrWhiteSpace(dto.Name))
             throw new ValidationException("Name is required");
 
-        if (db.HolidayDates.Any(h =>
-                h.Date == dto.Date &&
-                h.Type == "Company"))
+        if (db.HolidayDates.Any(h => h.Date == dto.Date && h.Type == "Company"))
             throw new ValidationException("Company holiday already exists on this date");
 
         var holiday = new HolidayDate
@@ -83,28 +81,26 @@ public class HolidayDateService(
             Name = dto.Name.Trim(),
             Type = "Company"
         };
-
         db.Insert(holiday);
 
         return new HolidayDateDto(holiday);
+
     }
 
-    public HolidayDateDto UpdateCompanyHoliday(
-        string id, 
-        UpdateCompanyHolidayRequestDto dto)
+    public HolidayDateDto UpdateCompanyHoliday(string id, UpdateCompanyHolidayRequestDto dto)
     {
         var holiday = db.HolidayDates
             .FirstOrDefault(h => h.HolidayDateId == id);
 
-        if (holiday is null || holiday.Type != "Company")
+        if (holiday is null || holiday.Type != "Company" )
             throw new ValidationException("Company holiday not found");
-        
+
         if (dto.Date == default)
             throw new ValidationException("Date is required");
 
         if (string.IsNullOrWhiteSpace(dto.Name))
             throw new ValidationException("Name is required");
-        
+
         if (db.HolidayDates.Any(h =>
                 h.Date == dto.Date &&
                 h.Type == "Company" &&
@@ -113,9 +109,9 @@ public class HolidayDateService(
 
         holiday.Date = dto.Date;
         holiday.Name = dto.Name.Trim();
-        
+
         db.Update(holiday);
-        
+
         return new HolidayDateDto(holiday);
     }
 
@@ -123,19 +119,18 @@ public class HolidayDateService(
     {
         var holiday = db.HolidayDates
             .FirstOrDefault(h => h.HolidayDateId == id);
-        
-        if (holiday is null || holiday.Type != "Company")
+
+        if (holiday is null|| holiday.Type != "Company")
             throw new ValidationException("Company holiday not found");
-        
+
         db.Delete(holiday);
     }
 
     public bool IsNonWorkingDay(DateOnly date)
     {
-        if (date.DayOfWeek is 
-            DayOfWeek.Saturday or DayOfWeek.Sunday)
+        if (date.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
             return true;
-        
+
         return db.HolidayDates.Any(h => h.Date == date);
     }
 }
