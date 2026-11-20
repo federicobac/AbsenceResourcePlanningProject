@@ -13,6 +13,7 @@ public class Seeder(
     {
         db.CreateTable<User>(tableOptions: TableOptions.CreateIfNotExists);
         db.CreateTable<HolidayDate>(tableOptions: TableOptions.CreateIfNotExists);
+        db.CreateTable<WorkingSchedule>(tableOptions: TableOptions.CreateIfNotExists);
 
         var adminPassword = configuration["SeedAdmin:Password"];
         var adminEmail = configuration["SeedAdmin:Email"];
