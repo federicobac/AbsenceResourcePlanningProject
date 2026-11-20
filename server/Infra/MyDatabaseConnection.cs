@@ -7,4 +7,5 @@ public class MyDatabaseConnection(DataOptions<MyDatabaseConnection> options) : D
 {
     public ITable<User> Users => this.GetTable<User>();
     public ITable<HolidayDate> HolidayDates => this.GetTable<HolidayDate>();
+    public ITable<WorkingSchedule>  WorkingSchedules => this.GetTable<WorkingSchedule>();
 }

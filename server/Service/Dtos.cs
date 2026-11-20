@@ -8,3 +8,6 @@ public partial class UserDto;
 
 [Facet(sourceType:typeof(HolidayDate))]
 public partial class HolidayDateDto;
+
+[Facet(sourceType:typeof(WorkingSchedule))]
+public partial class WorkingScheduleDto;
