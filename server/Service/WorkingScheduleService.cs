@@ -96,17 +96,9 @@ public class WorkingScheduleService(MyDatabaseConnection db)
            if (dto.ValidFrom <= previous.ValidFrom)
                throw new ValidationException("New schedule must start after previous schedule");
 
-           if (previous.ValidUntil.HasValue)
-           {
-               if (dto.ValidFrom <= previous.ValidUntil.Value)
-                   throw new ValidationException("New schedule overlaps the previous schedule");
-               else
-               {
-                   previous.ValidUntil = dto.ValidFrom.AddDays(-1);
-                   db.Update(previous);
-               }
-           }
-           
+           if (previous.ValidUntil.HasValue &&
+               dto.ValidFrom <= previous.ValidUntil.Value)
+               throw new ValidationException("New schedule overlaps the previous schedule");
         }
 
         var schedule = CreateEntity(userId, dto);

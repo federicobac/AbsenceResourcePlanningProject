@@ -71,7 +71,7 @@ public class HolidayDateService(
         if (string.IsNullOrWhiteSpace(dto.Name))
             throw new ValidationException("Name is required");
 
-        if (db.HolidayDates.Any(h => h.Date == dto.Date && h.Type == "company"))
+        if (db.HolidayDates.Any(h => h.Date == dto.Date && h.Type == "Company"))
             throw new ValidationException("Company holiday already exists on this date");
 
         var holiday = new HolidayDate
@@ -103,7 +103,7 @@ public class HolidayDateService(
         
         if (db.HolidayDates.Any(h =>
                 h.Date == dto.Date &&
-                h.Type == "company" &&
+                h.Type == "Company" &&
                 h.HolidayDateId != id))
             throw new ValidationException("Company holiday already exists on this date");
         

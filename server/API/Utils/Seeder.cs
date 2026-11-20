@@ -55,7 +55,7 @@ public class Seeder(
         var employeeEmail = configuration["SeedEmployee:Email"];
 
         if (!string.IsNullOrEmpty(employeePassword) &&
-            !string.IsNullOrEmpty(employeePassword) &&
+            !string.IsNullOrEmpty(employeeEmail) &&
             !db.Users.Any(u => u.Role == UserRoles.Employee))
         {
             db.Insert(new User
