@@ -2,13 +2,18 @@ using API.Extensions;
 using API.Utils;
 using Infra;
 using LinqToDB;
+using LinqToDB.Mapping;
 using Service;
 using Service.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var mappingSchema = new MappingSchema();
+
+mappingSchema.SetConverter<DateTime, TimeOnly>(dt => TimeOnly.FromDateTime(dt));
+
 var options = new DataOptions<MyDatabaseConnection>(
-    new DataOptions().UseSQLite("Data Source=../Infra/db.db"));
+    new DataOptions().UseSQLite("Data Source=../Infra/db.db").UseMappingSchema(mappingSchema));
 
 var jwtSettings = builder.Configuration
     .GetSection(JwtSettings.SectionName)

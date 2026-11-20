@@ -17,8 +17,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPasswordHasher, Argon2PasswordHasher>();
         
         // Application services
-
         services.AddScoped<UserService>();
+        services.AddHttpClient<HolidayDateService>();
+        services.AddScoped<WorkingScheduleService>();
 
         return services;
     }

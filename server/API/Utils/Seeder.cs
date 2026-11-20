@@ -12,6 +12,8 @@ public class Seeder(
     public void Seed()
     {
         db.CreateTable<User>(tableOptions: TableOptions.CreateIfNotExists);
+        db.CreateTable<HolidayDate>(tableOptions: TableOptions.CreateIfNotExists);
+        db.CreateTable<WorkingSchedule>(tableOptions: TableOptions.CreateIfNotExists);
 
         var adminPassword = configuration["SeedAdmin:Password"];
         var adminEmail = configuration["SeedAdmin:Email"];
@@ -53,7 +55,7 @@ public class Seeder(
         var employeeEmail = configuration["SeedEmployee:Email"];
 
         if (!string.IsNullOrEmpty(employeePassword) &&
-            !string.IsNullOrEmpty(employeePassword) &&
+            !string.IsNullOrEmpty(employeeEmail) &&
             !db.Users.Any(u => u.Role == UserRoles.Employee))
         {
             db.Insert(new User
