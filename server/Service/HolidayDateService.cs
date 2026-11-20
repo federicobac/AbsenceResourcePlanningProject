@@ -64,10 +64,10 @@ public class HolidayDateService(
 
     public HolidayDateDto CreateCompanyHoliday(
         CreateCompanyHolidayRequestDto dto)
-    { 
+    {
         if (dto.Date == default)
             throw new ValidationException("Date is required");
-                
+
         if (string.IsNullOrWhiteSpace(dto.Name))
             throw new ValidationException("Name is required");
 
@@ -82,7 +82,7 @@ public class HolidayDateService(
             Type = "Company"
         };
         db.Insert(holiday);
-        
+
         return new HolidayDateDto(holiday);
 
     }
@@ -91,27 +91,27 @@ public class HolidayDateService(
     {
         var holiday = db.HolidayDates
             .FirstOrDefault(h => h.HolidayDateId == id);
-        
+
         if (holiday is null || holiday.Type != "Company" )
             throw new ValidationException("Company holiday not found");
-        
+
         if (dto.Date == default)
             throw new ValidationException("Date is required");
-        
+
         if (string.IsNullOrWhiteSpace(dto.Name))
             throw new ValidationException("Name is required");
-        
+
         if (db.HolidayDates.Any(h =>
                 h.Date == dto.Date &&
                 h.Type == "Company" &&
                 h.HolidayDateId != id))
             throw new ValidationException("Company holiday already exists on this date");
-        
+
         holiday.Date = dto.Date;
         holiday.Name = dto.Name.Trim();
-        
+
         db.Update(holiday);
-        
+
         return new HolidayDateDto(holiday);
     }
 
@@ -119,10 +119,10 @@ public class HolidayDateService(
     {
         var holiday = db.HolidayDates
             .FirstOrDefault(h => h.HolidayDateId == id);
-        
+
         if (holiday is null|| holiday.Type != "Company")
             throw new ValidationException("Company holiday not found");
-        
+
         db.Delete(holiday);
     }
 
