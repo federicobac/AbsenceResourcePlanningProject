@@ -6,5 +6,5 @@ namespace Service;
 [Facet(sourceType:typeof(User),exclude:[nameof(User.PasswordHash)])]
 public partial class UserDto;
 
-[Facet(sourceType: typeof(HolidayDate))]
+[Facet(sourceType:typeof(HolidayDate))]
 public partial class HolidayDateDto;
