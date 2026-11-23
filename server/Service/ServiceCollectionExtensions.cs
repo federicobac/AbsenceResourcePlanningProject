@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<UserService>();
         services.AddHttpClient<HolidayDateService>();
         services.AddScoped<WorkingScheduleService>();
+        services.AddScoped<GlobalRuleSetService>();
 
         return services;
     }
