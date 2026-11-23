@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mail;
+using System.Transactions;
 using Infra;
 using LinqToDB;
 using Service.RequestDtos;
@@ -10,7 +11,8 @@ namespace Service;
 public class UserService(
     MyDatabaseConnection db,
     IPasswordHasher passwordHasher,
-    ITokenService tokenService)
+    ITokenService tokenService,
+    WorkingScheduleService workingScheduleService)
 {
     public LoginResponseDto? Login(LoginRequestDto loginRequestDto)
     {
@@ -66,6 +68,9 @@ public class UserService(
 
         if (db.Users.Any(u => u.Username == dto.Username))
             throw new ValidationException("Username already exists");
+        
+        if (dto.WorkingSchedule is null)
+            throw new ValidationException("WorkingSchedule is required");
 
         string passwordHash = passwordHasher.HashAndSaltPassword(dto.Password);
 
@@ -77,7 +82,15 @@ public class UserService(
             PasswordHash = passwordHash,
             Role = UserRoles.Employee
         };
+        using var transaction = db.BeginTransaction();
         db.Insert(user);
+        
+        workingScheduleService.CreateSchedule(
+            user.UserId,
+            dto.WorkingSchedule);
+
+        transaction.Commit();
+        
         return new UserDto(user);
     }
 
@@ -127,7 +140,15 @@ public class UserService(
         if (user is null)
             throw new ValidationException("User not found");
 
+        using var transaction = db.BeginTransaction();
+        
+        db.WorkingSchedules
+            .Where(s => s.UserId == id)
+            .Delete();
+
         db.Delete(user);
+        
+        transaction.Commit();
     }
 
     private static string ValidateEmail(string email)

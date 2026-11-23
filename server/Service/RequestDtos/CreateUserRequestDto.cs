@@ -12,4 +12,6 @@ namespace Service.RequestDtos;
 public partial class CreateUserRequestDto
 {
     public string Password { get; set; }
+
+    public CreateWorkingScheduleRequestDto? WorkingSchedule { get; set; }
 }

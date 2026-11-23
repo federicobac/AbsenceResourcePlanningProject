@@ -53,12 +53,12 @@ public class Seeder(
         
         var employeePassword = configuration["SeedEmployee:Password"];
         var employeeEmail = configuration["SeedEmployee:Email"];
-
+        
         if (!string.IsNullOrEmpty(employeePassword) &&
             !string.IsNullOrEmpty(employeeEmail) &&
             !db.Users.Any(u => u.Role == UserRoles.Employee))
         {
-            db.Insert(new User
+            var employee = new User
             {
                 UserId = Guid.NewGuid().ToString(),
                 Username = "employee",
@@ -66,7 +66,35 @@ public class Seeder(
                 PasswordHash =
                     passwordHasher.HashAndSaltPassword(employeePassword),
                 Role = UserRoles.Employee
+            };
+            using var transaction = db.BeginTransaction();
+            db.Insert(employee);
+            db.Insert(new WorkingSchedule
+            {
+                WorkingScheduleId = Guid.NewGuid().ToString(),
+                UserId = employee.UserId,
+
+                ValidFrom = new DateOnly(2026, 1, 1),
+                ValidUntil = null,
+                
+                EmploymentType = "FullTime",
+
+                MondayFrom = new TimeOnly(8, 0),
+                MondayTo = new TimeOnly(15, 30),
+
+                TuesdayFrom = new TimeOnly(8, 0),
+                TuesdayTo = new TimeOnly(15, 30),
+
+                WednesdayFrom = new TimeOnly(8, 0),
+                WednesdayTo = new TimeOnly(15, 30),
+
+                ThursdayFrom = new TimeOnly(8, 0),
+                ThursdayTo = new TimeOnly(15, 30),
+
+                FridayFrom = new TimeOnly(8, 0),
+                FridayTo = new TimeOnly(15, 0)
             });
+            transaction.Commit();
         }
     }
 }
