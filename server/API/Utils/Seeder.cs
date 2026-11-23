@@ -14,6 +14,68 @@ public class Seeder(
         db.CreateTable<User>(tableOptions: TableOptions.CreateIfNotExists);
         db.CreateTable<HolidayDate>(tableOptions: TableOptions.CreateIfNotExists);
         db.CreateTable<WorkingSchedule>(tableOptions: TableOptions.CreateIfNotExists);
+        db.CreateTable<GlobalRuleSet>(tableOptions: TableOptions.CreateIfNotExists);
+        
+        if (!db.GlobalRuleSets.Any())
+        {
+            db.Insert(new GlobalRuleSet
+            {
+                GlobalRuleSetId = Guid.NewGuid().ToString(),
+
+                Name = "Global Rule Set Default",
+
+                ValidFrom = new DateOnly(2026, 1, 1),
+                ValidUntil = null,
+
+                // General
+                FullTimeWeeklyHours = 37m,
+
+                // Statutory holiday: weeks 1–5
+                StatutoryAnnualDays = 25m,
+
+                StatutoryEarningStartMonth = 9,
+                StatutoryEarningStartDay = 1,
+
+                StatutoryUsageEndMonth = 12,
+                StatutoryUsageEndDay = 31,
+
+                // Main holiday
+                MainHolidayDays = 15,
+
+                MainHolidayStartMonth = 5,
+                MainHolidayStartDay = 1,
+
+                MainHolidayEndMonth = 9,
+                MainHolidayEndDay = 30,
+
+                // Notice periods
+                MainHolidayNoticeMonths = 3,
+                OtherHolidayNoticeMonths = 1,
+
+                // Sixth week
+                SixthWeekEnabled = true,
+                SixthWeekAnnualHours = 37m,
+
+                SixthWeekEarningStartMonth = 1,
+                SixthWeekEarningStartDay = 1,
+
+                SixthWeekUsageStartMonth = 5,
+                SixthWeekUsageStartDay = 1,
+
+                SixthWeekUsageEndMonth = 4,
+                SixthWeekUsageEndDay = 30,
+
+                // Holiday debt
+                MaxStatutoryDebtDays = 5,
+
+                // Transfer deadlines
+                FifthWeekTransferDeadlineMonth = 12,
+                FifthWeekTransferDeadlineDay = 31,
+
+                SixthWeekTransferDeadlineMonth = 9,
+                SixthWeekTransferDeadlineDay = 30
+            });
+        }
 
         var adminPassword = configuration["SeedAdmin:Password"];
         var adminEmail = configuration["SeedAdmin:Email"];

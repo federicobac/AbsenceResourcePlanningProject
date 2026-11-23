@@ -11,3 +11,6 @@ public partial class HolidayDateDto;
 
 [Facet(sourceType:typeof(WorkingSchedule))]
 public partial class WorkingScheduleDto;
+
+[Facet(sourceType:typeof(GlobalRuleSet))]
+public partial class GlobalRuleSetDto;
