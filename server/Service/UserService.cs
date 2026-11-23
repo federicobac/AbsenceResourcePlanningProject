@@ -10,7 +10,8 @@ namespace Service;
 public class UserService(
     MyDatabaseConnection db,
     IPasswordHasher passwordHasher,
-    ITokenService tokenService)
+    ITokenService tokenService,
+    WorkingScheduleService workingScheduleService)
 {
     public LoginResponseDto? Login(LoginRequestDto loginRequestDto)
     {
@@ -68,7 +69,10 @@ public class UserService(
             throw new ValidationException("Username already exists");
 
         string passwordHash = passwordHasher.HashAndSaltPassword(dto.Password);
-
+        
+        if (dto.WorkingSchedule is null)
+            throw new ValidationException("WorkingSchedule is required");
+        
         var user = new User()
         {
             UserId = Guid.NewGuid().ToString(),
@@ -77,7 +81,17 @@ public class UserService(
             PasswordHash = passwordHash,
             Role = UserRoles.Employee
         };
+        
+        using var transaction = db.BeginTransaction();
+        
         db.Insert(user);
+
+        workingScheduleService.CreateSchedule(
+            user.UserId,
+            dto.WorkingSchedule);
+        
+        transaction.Commit();
+        
         return new UserDto(user);
     }
 
@@ -126,8 +140,16 @@ public class UserService(
 
         if (user is null)
             throw new ValidationException("User not found");
+        
+        using var transaction = db.BeginTransaction();
+
+        db.WorkingSchedules
+            .Where(s => s.UserId == id)
+            .Delete();
 
         db.Delete(user);
+        
+        transaction.Commit();
     }
 
     private static string ValidateEmail(string email)
