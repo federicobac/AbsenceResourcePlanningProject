@@ -84,9 +84,9 @@ public class GlobalRuleSetService(MyDatabaseConnection db)
             "Main holiday end");
         
         ValidateMonthDay(
-            ruleSet.SixthWeekEarningStartMonth,
-            ruleSet.SixthWeekEarningStartDay,
-            "Sixth-week earning start");
+            ruleSet.SixthWeekUsageStartMonth,
+            ruleSet.SixthWeekUsageStartDay,
+            "Sixth-week usage start");
         
         ValidateMonthDay(
             ruleSet.SixthWeekTransferDeadlineMonth,
