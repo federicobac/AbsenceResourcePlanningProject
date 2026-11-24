@@ -202,44 +202,47 @@ public class GlobalRuleSetService(MyDatabaseConnection db)
         };
     }
 
-    public GlobalRuleSetDto CreateRuleSet(CreateGlobalRuleSetRequestDto dto)
+    public GlobalRuleSetDto CreateRuleSet(
+        CreateGlobalRuleSetRequestDto dto)
     {
         if (dto.ValidFrom < Today())
-            throw new ValidationException("A new rule set cannot start in the past");
+            throw new ValidationException(
+                "A new rule set cannot start in the past");
 
         var ruleSets = db.GlobalRuleSets
             .OrderBy(r => r.ValidFrom)
             .ToList();
+        
+        if (ruleSets.Any(r => r.ValidFrom > Today()))
+            throw new ValidationException(
+                "A future rule set is already scheduled. " +
+                "Update or delete it before creating another.");
 
         if (ruleSets.Any(r => r.ValidFrom == dto.ValidFrom))
-            throw new ValidationException("A rule set already starts on this date");
+            throw new ValidationException(
+                "A rule set already starts on this date");
 
-        var previous = ruleSets
-            .LastOrDefault(r => r.ValidFrom < dto.ValidFrom);
-        
-        var next = ruleSets
-            .FirstOrDefault(r =>r.ValidFrom > dto.ValidFrom);
-        
-        if (ruleSets.Count > 0 && previous is null)
-            throw new ValidationException("A rule set cannot start before the initial rule set");
+        var previous = ruleSets.LastOrDefault();
+
+        if (previous != null &&
+            dto.ValidFrom <= previous.ValidFrom)
+            throw new ValidationException(
+                "New rule set must start after the previous rule set");
 
         var ruleSet = CreateEntity(dto);
-        
+
         ValidateRuleSet(ruleSet);
 
-        if (next is not null)
-            ruleSet.ValidUntil = next.ValidFrom.AddDays(-1);
-
         using var transaction = db.BeginTransaction();
-        
-        if (previous is not null)
+
+        if (previous != null)
         {
             previous.ValidUntil = dto.ValidFrom.AddDays(-1);
             db.Update(previous);
         }
 
         db.Insert(ruleSet);
-        
+
         transaction.Commit();
 
         return new GlobalRuleSetDto(ruleSet);
