@@ -14,3 +14,9 @@ public partial class WorkingScheduleDto;
 
 [Facet(sourceType:typeof(GlobalRuleSet))]
 public partial class GlobalRuleSetDto;
+
+[Facet(sourceType:typeof(RulePreset))]
+public partial class RulePresetDto;
+
+[Facet(sourceType:typeof(RulePresetPeriod))]
+public partial class RulePresetPeriodDto;

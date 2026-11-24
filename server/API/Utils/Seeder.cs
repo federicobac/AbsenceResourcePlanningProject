@@ -15,7 +15,10 @@ public class Seeder(
         db.CreateTable<HolidayDate>(tableOptions: TableOptions.CreateIfNotExists);
         db.CreateTable<WorkingSchedule>(tableOptions: TableOptions.CreateIfNotExists);
         db.CreateTable<GlobalRuleSet>(tableOptions: TableOptions.CreateIfNotExists);
+        db.CreateTable<RulePreset>(tableOptions: TableOptions.CreateIfNotExists);
+        db.CreateTable<RulePresetPeriod>(tableOptions: TableOptions.CreateIfNotExists);
         
+        // Seed Global Rule Sets
         if (!db.GlobalRuleSets.Any())
         {
             db.Insert(new GlobalRuleSet
@@ -77,6 +80,38 @@ public class Seeder(
             });
         }
 
+        // Seed the two Rule Presets / Profiles
+        if (!db.RulePresets.Any(p => p.RulePresetCode == RulePreset.Minimum))
+        {
+            db.Insert(new RulePreset
+            {
+                RulePresetCode = RulePreset.Minimum,
+                Name = "Ferieloven (minimum)"
+            });
+        }
+
+        if (!db.RulePresets.Any(p => p.RulePresetCode == RulePreset.KlSixthWeek))
+        {
+            db.Insert(new RulePreset
+            {
+                RulePresetCode = RulePreset.KlSixthWeek,
+                Name = "Ferieloven + 6. ferieuge (KL 05.11 model)"
+            });
+        }
+
+        // Seed Rule Preset Period = KL SIXTH WEEK
+        if (!db.RulePresetPeriods.Any())
+        {
+            db.Insert(new RulePresetPeriod
+            {
+                RulePresetPeriodId = Guid.NewGuid().ToString(),
+                RulePresetCode = RulePreset.KlSixthWeek,
+                ValidFrom = new DateOnly(2026, 1, 1),
+                ValidUntil = null
+            });
+        }
+
+        // Seed Users (+ working schedule for employee)
         var adminPassword = configuration["SeedAdmin:Password"];
         var adminEmail = configuration["SeedAdmin:Email"];
 
