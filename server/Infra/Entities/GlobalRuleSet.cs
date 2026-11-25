@@ -37,7 +37,6 @@ public class GlobalRuleSet
     public int OtherHolidayNoticeMonths { get; set; }
 
     // Sixth week
-    public bool SixthWeekEnabled { get; set; }
     public decimal SixthWeekAnnualHours { get; set; }
 
     public int SixthWeekEarningStartMonth { get; set; }

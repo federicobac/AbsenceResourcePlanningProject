@@ -55,9 +55,8 @@ public class GlobalRuleSetService(MyDatabaseConnection db)
             ruleSet.MainHolidayDays > ruleSet.StatutoryAnnualDays) 
             throw new ValidationException("Invalid number of main holiday days");
         
-        if (ruleSet.SixthWeekAnnualHours < 0 || 
-            (ruleSet.SixthWeekEnabled && ruleSet.SixthWeekAnnualHours == 0))
-            throw new ValidationException("Invalid sixth-week annual hours");
+        if (ruleSet.SixthWeekAnnualHours < 0)
+            throw new ValidationException("Sixth-week annal hours must be greater than zero");
         
         if (ruleSet.MaxStatutoryDebtDays < 0)
             throw new ValidationException("Maximum statutory debt cannot be negative");
@@ -179,7 +178,6 @@ public class GlobalRuleSetService(MyDatabaseConnection db)
             MainHolidayNoticeMonths = dto.MainHolidayNoticeMonths,
             OtherHolidayNoticeMonths = dto.OtherHolidayNoticeMonths,
 
-            SixthWeekEnabled = dto.SixthWeekEnabled,
             SixthWeekAnnualHours = dto.SixthWeekAnnualHours,
 
             SixthWeekEarningStartMonth = dto.SixthWeekEarningStartMonth,
@@ -266,7 +264,6 @@ public class GlobalRuleSetService(MyDatabaseConnection db)
         ruleSet.MainHolidayNoticeMonths = dto.MainHolidayNoticeMonths;
         ruleSet.OtherHolidayNoticeMonths = dto.OtherHolidayNoticeMonths;
 
-        ruleSet.SixthWeekEnabled = dto.SixthWeekEnabled;
         ruleSet.SixthWeekAnnualHours = dto.SixthWeekAnnualHours;
 
         ruleSet.SixthWeekEarningStartMonth = dto.SixthWeekEarningStartMonth;

@@ -56,7 +56,6 @@ public class Seeder(
                 OtherHolidayNoticeMonths = 1,
 
                 // Sixth week
-                SixthWeekEnabled = true,
                 SixthWeekAnnualHours = 37m,
 
                 SixthWeekEarningStartMonth = 1,
