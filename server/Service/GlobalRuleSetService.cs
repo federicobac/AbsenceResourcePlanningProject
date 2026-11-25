@@ -90,11 +90,6 @@ public class GlobalRuleSetService(MyDatabaseConnection db)
             "Sixth-week usage start");
         
         ValidateMonthDay(
-            ruleSet.SixthWeekTransferDeadlineMonth,
-            ruleSet.SixthWeekUsageStartDay,
-            "Sixth-week usage start");
-        
-        ValidateMonthDay(
             ruleSet.SixthWeekUsageEndMonth,
             ruleSet.SixthWeekUsageEndDay,
             "Sixth-week usage end");

@@ -79,11 +79,11 @@ public class Seeder(
         }
 
         if (!db.RulePresets.Any(p =>
-                p.RulePresetCode == RulePreset.Minimun))
+                p.RulePresetCode == RulePreset.Minimum))
         {
             db.Insert(new RulePreset
             {
-                RulePresetCode = RulePreset.Minimun,
+                RulePresetCode = RulePreset.Minimum,
                 Name = "Ferieloven (minimun)"
             });
         }

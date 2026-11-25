@@ -4,7 +4,7 @@ namespace Infra;
 
 public class RulePreset
 {
-    public const string Minimun = "FERIELOVEN";
+    public const string Minimum = "FERIELOVEN";
     public const string KlSixthWeek = "KL_SIXTH_WEEK";
     
     [PrimaryKey]public string RulePresetCode { get; set; }
