@@ -3,6 +3,7 @@ using Infra;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service;
+using Service.RequestDtos;
 using Service.Security;
 
 namespace API.Controllers;
@@ -10,7 +11,9 @@ namespace API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class HolidayAccountController(HolidayAccountService service) : ControllerBase
+public class HolidayAccountController(
+    HolidayAccountService service,
+    HolidayDeductionService deductionService) : ControllerBase
 {
     [HttpGet("me")]
     public ActionResult<List<HolidayAccount>> GetHolidayAccounts()
@@ -28,5 +31,17 @@ public class HolidayAccountController(HolidayAccountService service) : Controlle
     public List<HolidayAccountDto> GetEmployeeAccounts(string userId)
     {
         return service.GetAccounts(userId);
+    }
+    
+    [Authorize(Roles = UserRoles.Admin + "," + UserRoles.Accountant)]
+    [HttpPost("deduction-preview/user/{userId}")]
+    public HolidayDeductionPreviewDto PreviewDeduction(
+        string userId,
+        PreviewHolidayDeductionRequestDto dto)
+    {
+        return deductionService.PreviewDeduction(
+            userId,
+            dto.StartDate,
+            dto.EndDate);
     }
 }
