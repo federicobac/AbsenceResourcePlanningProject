@@ -1,5 +1,6 @@
 ﻿using Infra;
 using LinqToDB;
+using Service;
 using Service.Security;
 
 namespace API.Utils;
@@ -7,7 +8,8 @@ namespace API.Utils;
 public class Seeder(
     MyDatabaseConnection db,
     IPasswordHasher passwordHasher,
-    IConfiguration configuration)
+    IConfiguration configuration,
+    HolidayAccountService holidayAccountService)
 {
     public void Seed()
     {
@@ -17,6 +19,8 @@ public class Seeder(
         db.CreateTable<GlobalRuleSet>(tableOptions: TableOptions.CreateIfNotExists);
         db.CreateTable<RulePreset>(tableOptions: TableOptions.CreateIfNotExists);
         db.CreateTable<RulePresetPeriod>(tableOptions: TableOptions.CreateIfNotExists);
+        db.CreateTable<HolidayAccount>(tableOptions: TableOptions.CreateIfNotExists);
+        db.CreateTable<HolidayAccountEntry>(tableOptions: TableOptions.CreateIfNotExists);
         
         // Seed Global Rule Sets
         if (!db.GlobalRuleSets.Any())
@@ -193,6 +197,10 @@ public class Seeder(
                 FridayFrom = new TimeOnly(8, 0),
                 FridayTo = new TimeOnly(15, 00),
             });
+            
+            holidayAccountService.EnsureAccountsForDate(
+                employee.UserId,
+                new DateOnly(2026,1,1));
             
             transaction.Commit();
         }

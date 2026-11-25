@@ -21,7 +21,7 @@ public class GlobalRuleSetController(
     [HttpGet("applicable/{date}")]
     public GlobalRuleSetDto GetApplicableRuleSet(DateOnly date)
     {
-        return service.GetApplicableRuleSet(date);
+        return service.GetApplicableRulesSet(date);
     }
 
     [HttpPost]

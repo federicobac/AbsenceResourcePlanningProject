@@ -135,7 +135,7 @@ public class GlobalRuleSetService(MyDatabaseConnection db)
     }
 
     // Retrieve the applicable rule set for calculating holidays
-    public GlobalRuleSetDto GetApplicableRuleSet(DateOnly date)
+    public GlobalRuleSetDto GetApplicableRulesSet(DateOnly date)
     {
         var ruleSet = db.GlobalRuleSets
             .Where(r =>
