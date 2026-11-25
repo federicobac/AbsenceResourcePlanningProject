@@ -19,3 +19,9 @@ public partial class GlobalRuleSetDto;
 public partial class RulePresetDto;
 [Facet(sourceType:typeof(RulePresetPeriod))]
 public partial class RulePresetPeriodDto;
+
+[Facet(sourceType: typeof(HolidayAccount))]
+public partial class HolidayAccountDto;
+
+[Facet(sourceType: typeof(HolidayAccountEntry))]
+public partial class HolidayAccountEntryDto;

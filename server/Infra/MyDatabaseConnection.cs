@@ -12,4 +12,6 @@ public class MyDatabaseConnection(DataOptions<MyDatabaseConnection> options) : D
     public ITable<GlobalRuleSet>  GlobalRuleSets => this.GetTable<GlobalRuleSet>();
     public ITable<RulePreset>  RulePresets => this.GetTable<RulePreset>();
     public ITable<RulePresetPeriod>  RulePresetPeriods => this.GetTable<RulePresetPeriod>();
+    public ITable<HolidayAccount> HolidayAccounts => this.GetTable<HolidayAccount>();
+    public ITable<HolidayAccountEntry> HolidayAccountEntries => this.GetTable<HolidayAccountEntry>();
 }

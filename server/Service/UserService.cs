@@ -12,7 +12,8 @@ public class UserService(
     MyDatabaseConnection db,
     IPasswordHasher passwordHasher,
     ITokenService tokenService,
-    WorkingScheduleService workingScheduleService)
+    WorkingScheduleService workingScheduleService,
+    HolidayAccountService holidayAccountService)
 {
     public LoginResponseDto? Login(LoginRequestDto loginRequestDto)
     {
@@ -88,6 +89,10 @@ public class UserService(
         workingScheduleService.CreateSchedule(
             user.UserId,
             dto.WorkingSchedule);
+        
+        holidayAccountService.EnsureAccountsForDate(
+            user.UserId,
+            dto.WorkingSchedule.ValidFrom);
 
         transaction.Commit();
         
@@ -139,12 +144,27 @@ public class UserService(
 
         if (user is null)
             throw new ValidationException("User not found");
+                
+        var accountIds =db.HolidayAccounts
+            .Where(a => a.UserId == id)
+            .Select(a=>a.HolidayAccountId)
+            .ToList();
+
+        if (db.HolidayAccountEntries.Any(e => accountIds.Contains(e.HolidayAccountId)))
+        {
+            throw new ValidationException("Cannot delete an employee with holiday account history");
+        }
 
         using var transaction = db.BeginTransaction();
+        
+        db.HolidayAccounts
+            .Where(a=> a.UserId == id)
+            .Delete();
         
         db.WorkingSchedules
             .Where(s => s.UserId == id)
             .Delete();
+
 
         db.Delete(user);
         
