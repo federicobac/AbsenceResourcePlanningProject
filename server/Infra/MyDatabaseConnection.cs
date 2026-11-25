@@ -10,4 +10,6 @@ public class MyDatabaseConnection(DataOptions<MyDatabaseConnection> options) : D
     public ITable<WorkingSchedule>  WorkingSchedules => this.GetTable<WorkingSchedule>();
     
     public ITable<GlobalRuleSet>  GlobalRuleSets => this.GetTable<GlobalRuleSet>();
+    public ITable<RulePreset>  RulePresets => this.GetTable<RulePreset>();
+    public ITable<RulePresetPeriod>  RulePresetPeriods => this.GetTable<RulePresetPeriod>();
 }
