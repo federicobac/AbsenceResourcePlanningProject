@@ -116,7 +116,7 @@ public class RulePresetService(MyDatabaseConnection db)
         
         EnsureScheduled(period);
         
-        if (dto.ValidFrom< Today())
+        if (dto.ValidFrom < Today())
             throw new ValidationException("A preset cannot start in the past");
         ValidatePreset(dto.RulePresetCode);
 
