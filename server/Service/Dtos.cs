@@ -25,3 +25,16 @@ public partial class HolidayAccountDto;
 
 [Facet(sourceType: typeof(HolidayAccountEntry))]
 public partial class HolidayAccountEntryDto;
+
+public record HolidayDeductionDayDto(
+    DateOnly Date,
+    decimal Hours);
+
+public record HolidayDeductionPreviewDto(
+    string UserId,
+    DateOnly StartDate,
+    DateOnly EndDate,
+    int WorkingDays,
+    decimal TotalHours,
+    List<HolidayDeductionDayDto> Days);
+

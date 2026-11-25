@@ -23,6 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<GlobalRuleSetService>();
         services.AddScoped<RulePresetService>();
         services.AddScoped<HolidayAccountService>();
+        services.AddScoped<HolidayDeductionService>();
 
         return services;
     }

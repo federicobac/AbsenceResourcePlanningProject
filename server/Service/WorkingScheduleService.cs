@@ -136,4 +136,34 @@ public class WorkingScheduleService(MyDatabaseConnection db)
             .Select(s => new WorkingScheduleDto(s))
             .ToList();
     }
+
+    public decimal GetScheduledHoursForDate(string userId, DateOnly date)
+    {
+        if (date.DayOfWeek is
+            DayOfWeek.Saturday or DayOfWeek.Sunday)
+            return 0m;
+
+        var schedule = db.WorkingSchedules
+            .Where(s =>
+                s.UserId == userId &&
+                s.ValidFrom <= date &&
+                (!s.ValidUntil.HasValue ||
+                 s.ValidUntil.Value >= date))
+            .FirstOrDefault();
+
+        if (schedule is null)
+            throw new ValidationException($"Not working schedule found for {date}");
+
+        (TimeOnly? from, TimeOnly? to) = date.DayOfWeek switch
+        {
+            DayOfWeek.Monday => (schedule.MondayFrom, schedule.MondayTo),
+            DayOfWeek.Tuesday => (schedule.TuesdayFrom, schedule.TuesdayTo),
+            DayOfWeek.Wednesday => (schedule.WednesdayFrom, schedule.WednesdayTo),
+            DayOfWeek.Thursday => (schedule.ThursdayFrom, schedule.ThursdayTo),
+            DayOfWeek.Friday => (schedule.FridayFrom, schedule.FridayTo),
+
+            _ => (null, null)
+        };
+        return CalculateDayHours(from, to);
+    }
 }
