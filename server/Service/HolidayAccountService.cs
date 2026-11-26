@@ -44,7 +44,7 @@ public class HolidayAccountService(MyDatabaseConnection db, GlobalRuleSetService
         bool exists = db.HolidayAccounts.Any(
             a=> a.UserId == userId &&
                 a.AccountType == accountType &&
-                a.EarningPeriodStar == earningStart);
+                a.EarningPeriodStart == earningStart);
         
         if (exists)
             
@@ -57,10 +57,10 @@ public class HolidayAccountService(MyDatabaseConnection db, GlobalRuleSetService
             UserId = userId,
             AccountType = accountType,
 
-            EarningPeriodStar = earningStart,
+            EarningPeriodStart = earningStart,
             EarningPeriodEnd = earningEnd,
 
-            UsagePeriodStar = usageStart,
+            UsagePeriodStart = usageStart,
             UsagePeriodEnd = usageEnd
         });
     }
@@ -139,7 +139,7 @@ public class HolidayAccountService(MyDatabaseConnection db, GlobalRuleSetService
 
         return db.HolidayAccounts
             .Where(a => a.UserId == userId)
-            .OrderByDescending(a => a.EarningPeriodStar)
+            .OrderByDescending(a => a.EarningPeriodStart)
             .ToList()
             .Select(a => new HolidayAccountDto(a))
             .ToList();
@@ -182,7 +182,7 @@ public class HolidayAccountService(MyDatabaseConnection db, GlobalRuleSetService
             .Where(a =>
                 a.UserId == userId &&
                 a.AccountType == accountType &&
-                a.UsagePeriodStar <= date &&
+                a.UsagePeriodStart <= date &&
                 a.UsagePeriodEnd >= date)
             .Select(a => a.HolidayAccountId)
             .ToList();

@@ -11,5 +11,5 @@ public class HolidayAccountEntry
     public string EntryType { get; set; }
     public decimal Hours { get; set; }
     public string? ReferenceId { get; set; }
-    public DateTime CreateAtUtc { get; set; }
+    public DateTime CreatedAtUtc { get; set; }
 }

@@ -12,9 +12,9 @@ public class HolidayAccount
     public string UserId { get; set; }
     public string AccountType { get; set; }
     
-    public DateOnly EarningPeriodStar { get; set; }
+    public DateOnly EarningPeriodStart { get; set; }
     public DateOnly EarningPeriodEnd { get; set; }
     
-    public DateOnly UsagePeriodStar { get; set; }
+    public DateOnly UsagePeriodStart { get; set; }
     public DateOnly UsagePeriodEnd { get; set; }
 }
