@@ -1,19 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Infra;
+using Service.RequestDtos;
+using Service.Security;
 
 namespace Service;
 
-public class HolidayRequestService(MyDatabaseConnection db)
+public class HolidayRequestService(
+    MyDatabaseConnection db,
+    HolidayDeductionService deductionService)
 {
-    private static void ValidateAccountType(string accountType)
-    {
-        if (accountType is not (
-            HolidayAccount.Statutory or HolidayAccount.SixthWeek))
-        {
-            throw new ValidationException("Invalid holiday account type");
-        }
-    }
-
     private static DateOnly Today()
     {
         var timezone = TimeZoneInfo.FindSystemTimeZoneById(
@@ -25,6 +20,14 @@ public class HolidayRequestService(MyDatabaseConnection db)
         return DateOnly.FromDateTime(danishTime);
     }
 
+    private static void ValidateAccountType(string accountType)
+    {
+        if (accountType is not (
+            HolidayAccount.Statutory or HolidayAccount.SixthWeek))
+        {
+            throw new ValidationException("Invalid holiday account type");
+        }
+    }
     private static void ValidateDates(DateOnly startDate, DateOnly endDate)
     {
         if (startDate == default || endDate == default)
@@ -55,7 +58,29 @@ public class HolidayRequestService(MyDatabaseConnection db)
             throw new ValidationException(
                 "An existing holiday request overlaps these dates");
     }
-    
-    
+
+    public HolidayDeductionPreviewDto PreviewRequest(string userId, CreateHolidayRequestRequestDto dto)
+    {
+        if (!db.Users.Any(u =>
+                u.UserId == userId &&
+                u.Role == UserRoles.Employee))
+        {
+            throw new ValidationException("Employee not found");
+        }
+        ValidateAccountType(dto.AccountType);
+        
+        ValidateDates(dto.StartDate, dto.EndDate);
+        
+        ValidateNoOverlap(
+            userId,
+            dto.StartDate,
+            dto.EndDate);
+
+        return deductionService.PreviewDeduction(
+            userId,
+            dto.StartDate,
+            dto.EndDate);
+
+    }
     
 }
