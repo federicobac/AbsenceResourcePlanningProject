@@ -44,7 +44,7 @@ public class HolidayAccrualService(
         }
 
         decimal sixthWeekAnnualHours =
-            rules.SixthWeekAnnualHours =
+            rules.SixthWeekAnnualHours *
                 weeklyHours /
                 rules.FullTimeWeeklyHours;
         
