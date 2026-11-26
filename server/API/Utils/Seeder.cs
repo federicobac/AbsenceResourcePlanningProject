@@ -21,6 +21,7 @@ public class Seeder(
         db.CreateTable<RulePresetPeriod>(tableOptions: TableOptions.CreateIfNotExists);
         db.CreateTable<HolidayAccount>(tableOptions: TableOptions.CreateIfNotExists);
         db.CreateTable<HolidayAccountEntry>(tableOptions: TableOptions.CreateIfNotExists);
+        db.CreateTable<HolidayRequest>(tableOptions: TableOptions.CreateIfNotExists);
 
         if (!db.GlobalRuleSets.Any())
         {

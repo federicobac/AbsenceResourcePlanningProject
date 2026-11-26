@@ -38,3 +38,6 @@ public record HolidayDeductionPreviewDto(
     decimal TotalHours,
     List<HolidayDeductionDayDto> Days);
 
+[Facet(sourceType:typeof(HolidayRequest))]
+public partial class HolidayRequestDto;
+
