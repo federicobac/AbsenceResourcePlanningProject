@@ -8,7 +8,7 @@ using Service.Security;
 namespace API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 [Authorize(Roles = UserRoles.Employee)]
 public class HolidayRequestController( HolidayRequestService service) : ControllerBase
 {

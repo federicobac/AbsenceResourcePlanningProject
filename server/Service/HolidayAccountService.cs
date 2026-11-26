@@ -159,4 +159,44 @@ public class HolidayAccountService(MyDatabaseConnection db, GlobalRuleSetService
             .ToList()
             .Sum();
     }
+
+    public decimal GetRecordedBalanceOnDate(
+        string userId,
+        string accountType,
+        DateOnly date)
+    {
+        if (!db.Users.Any(u =>
+                u.UserId == userId &&
+                u.Role == UserRoles.Employee))
+        {
+            throw new ValidationException("Employee not found");
+        }
+
+        if (accountType is not (
+            HolidayAccount.Statutory or HolidayAccount.SixthWeek))
+        {
+            throw new ValidationException("Invalid holiday account type");
+        }
+
+        var accountIds = db.HolidayAccounts
+            .Where(a =>
+                a.UserId == userId &&
+                a.AccountType == accountType &&
+                a.UsagePeriodStar <= date &&
+                a.UsagePeriodEnd >= date)
+            .Select(a => a.HolidayAccountId)
+            .ToList();
+
+        if (accountIds.Count == 0)
+
+            return 0m;
+        
+        return db.HolidayAccountEntries
+            .Where(e =>
+                accountIds.Contains(e.HolidayAccountId)&&
+                e.EffectiveDate <= date)
+            .Select(e=>e.Hours)
+            .ToList()
+            .Sum();
+    }
 }
