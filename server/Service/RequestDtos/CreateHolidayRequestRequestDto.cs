@@ -1,9 +1,18 @@
-﻿namespace Service.RequestDtos;
+﻿using Facet;
+using Infra;
 
-public class CreateHolidayRequestRequestDto
-{
-    public string AccountType { get; set; }
-    public DateOnly StartDate  { get; set; }
-    public DateOnly EndDate { get; set; }
-    public string? Comment { get; set; }
-}
+namespace Service.RequestDtos;
+
+[Facet(sourceType: typeof(HolidayRequest),
+    exclude:
+    [
+        nameof(HolidayRequest.HolidayRequestId),
+        nameof(HolidayRequest.UserId),
+        nameof(HolidayRequest.RequestedHours),
+        nameof(HolidayRequest.Status),
+        nameof(HolidayRequest.CreatedAtUtc),
+        nameof(HolidayRequest.ReviewedByUserId),
+        nameof(HolidayRequest.ReviewedAtUtc),
+        nameof(HolidayRequest.ReviewComment)
+    ])]
+public partial class CreateHolidayRequestRequestDto;
