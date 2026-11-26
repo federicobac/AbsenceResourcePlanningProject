@@ -25,6 +25,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<HolidayAccountService>();
         services.AddScoped<HolidayDeductionService>();
         services.AddScoped<HolidayRequestService>();
+        services.AddScoped<HolidayAccrualService>();
 
         return services;
     }

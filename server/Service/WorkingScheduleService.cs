@@ -161,18 +161,33 @@ public class WorkingScheduleService(MyDatabaseConnection db)
         (TimeOnly? from, TimeOnly? to) = date.DayOfWeek switch
         {
             DayOfWeek.Monday => (schedule.MondayFrom, schedule.MondayTo),
-
             DayOfWeek.Tuesday => (schedule.TuesdayFrom, schedule.TuesdayTo),
-
             DayOfWeek.Wednesday => (schedule.WednesdayFrom, schedule.WednesdayTo),
-
             DayOfWeek.Thursday => (schedule.ThursdayFrom, schedule.ThursdayTo),
-
             DayOfWeek.Friday => (schedule.FridayFrom, schedule.FridayTo),
-
             _ => (null, null)
         };
 
         return CalculateDayHours(from, to);
     }
+    
+    public decimal GetWeeklyHoursForDate(string userId, DateOnly date)
+    {
+        var schedule = db.WorkingSchedules
+            .Where(s =>
+                s.UserId == userId &&
+                s.ValidFrom <= date &&
+                (!s.ValidUntil.HasValue || s.ValidUntil.Value >= date))
+            .FirstOrDefault();
+
+        if (schedule is null)
+            throw new ValidationException($"No working schedule found for {date}");
+
+        return
+            CalculateDayHours(schedule.MondayFrom, schedule.MondayTo) +
+            CalculateDayHours(schedule.TuesdayFrom, schedule.TuesdayTo) +
+            CalculateDayHours(schedule.WednesdayFrom, schedule.WednesdayTo) +
+            CalculateDayHours(schedule.ThursdayFrom, schedule.ThursdayTo) +
+            CalculateDayHours(schedule.FridayFrom, schedule.FridayTo);
+    } 
 }

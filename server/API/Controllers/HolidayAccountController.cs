@@ -13,7 +13,8 @@ namespace API.Controllers;
 [Authorize]
 public class HolidayAccountController(
     HolidayAccountService service,
-    HolidayDeductionService deductionService) : ControllerBase
+    HolidayDeductionService deductionService,
+    HolidayAccrualService accrualService) : ControllerBase
 {
     [HttpGet("me")]
     public ActionResult<List<HolidayAccount>> GetHolidayAccounts()
@@ -43,5 +44,14 @@ public class HolidayAccountController(
             userId,
             dto.StartDate,
             dto.EndDate);
+    }
+    
+    [Authorize(Roles = UserRoles.Admin)]
+    [HttpPost("accrual/user/{userId}/{monthStart}")]
+    public List<HolidayAccountEntryDto> PostMonthlyAccrual(
+        string userId,
+        DateOnly monthStart)
+    {
+        return accrualService.PostCompletedMonth(userId, monthStart);
     }
 }
