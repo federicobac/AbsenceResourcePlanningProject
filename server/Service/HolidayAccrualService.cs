@@ -59,14 +59,26 @@ public class HolidayAccrualService(
         DateOnly throughDate)
     {
         var account = db.HolidayAccounts
-            .FirstOrDefault(a=>
+            .FirstOrDefault(a =>
                 a.HolidayAccountId == accountId &&
                 a.UserId == userId);
-        
+
         if (account is null)
             throw new ValidationException("Holiday account not found");
 
-        var firstSchedule = db.WorkingSchedules
+        return CalculateAccruedHours(
+            userId,
+            account,
+            throughDate);
+    }
+    
+    public decimal CalculateAccruedHours(
+        string userId,
+        HolidayAccount account,
+        DateOnly throughDate)
+    {
+
+    var firstSchedule = db.WorkingSchedules
             .Where(s => s.UserId == userId)
             .OrderBy(s => s.ValidFrom)
             .FirstOrDefault();
