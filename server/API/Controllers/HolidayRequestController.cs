@@ -10,7 +10,9 @@ namespace API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Roles = UserRoles.Employee)]
-public class HolidayRequestController(HolidayRequestService service) : ControllerBase
+public class HolidayRequestController(
+    HolidayRequestService service,
+    HolidayBalanceProjectionService projectionService) : ControllerBase
 {
     [HttpPost("preview")]
     public ActionResult<HolidayDeductionPreviewDto> PreviewRequest(CreateHolidayRequestRequestDto dto)
@@ -21,5 +23,21 @@ public class HolidayRequestController(HolidayRequestService service) : Controlle
             return Unauthorized();
         
         return Ok(service.PreviewRequest(userId, dto));
+    }
+
+    [HttpGet("balance-preview/{accountType}/{date}")]
+    public ActionResult<ProjectedHolidayBalanceDto> GetProjectedBalance(
+        string accountType,
+        DateOnly date)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId is null)
+            return Unauthorized();
+
+        return Ok(projectionService.GetProjectedBalance(
+            userId,
+            accountType,
+            date));
     }
 }

@@ -199,7 +199,7 @@ public class HolidayAccountService(
             .Where(a => a.UserId == userId)
             .ToList();
         
-        // Earliest date for which both configuration system exist
+        // Earliest date for which both configuration systems exist
         var firstRules = db.GlobalRuleSets
             .OrderBy(r => r.ValidFrom)
             .FirstOrDefault();
@@ -219,15 +219,15 @@ public class HolidayAccountService(
         if (targetDate < earliestDate)
             return [];
         
-        // Sample relevant earning years an configuration transitions
+        // Sample relevant earning years and configuration transitions
         var dates = new HashSet<DateOnly>
         {
             targetDate,
             earliestDate
         };
         
-        for (int i = 1; i < 3 && targetDate.Year > i; i++) 
-            dates.Add(targetDate.AddDays(-1));
+        for (int i = 1; i <= 3 && targetDate.Year > i; i++) 
+            dates.Add(targetDate.AddYears(-i));
         
         foreach (var rules in db.GlobalRuleSets
                      .Where(r => r.ValidFrom <= targetDate)
@@ -280,8 +280,8 @@ public class HolidayAccountService(
             {
                 var sixthStart = GetPeriodStart(
                     date,
-                    rules.SixthWeekUsageStartMonth,
-                    rules.SixthWeekUsageStartDay);
+                    rules.SixthWeekEarningStartMonth,
+                    rules.SixthWeekEarningStartDay);
 
                 var sixthEnd = sixthStart
                     .AddYears(1)
@@ -312,7 +312,7 @@ public class HolidayAccountService(
                 a.UsagePeriodEnd >= targetDate)
             .ToList();
         
-        // Add an in-memory account only if the earning period is not already present
+        // Add an in-memory account only if the earning period is not already represented
         void AddCandidate(
             string accountType,
             DateOnly earningStart,
