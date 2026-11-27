@@ -41,3 +41,20 @@ public record HolidayDeductionPreviewDto(
 [Facet(sourceType:typeof(HolidayRequest))]
 public partial class HolidayRequestDto;
 
+public record ProjectedHolidayAccountDto(
+    string AccountType,
+    DateOnly EarningPeriodStart,
+    DateOnly EarningPeriodEnd,
+    DateOnly UsagePeriodEnd,
+    decimal EarnedHours,
+    decimal OtherEntriesHours,
+    decimal BalanceHours
+);
+
+public record ProjectedHolidayBalanceDto(
+    string UserId,
+    string AccountType,
+    DateOnly AsOfDate,
+    decimal TotalHours,
+    List<ProjectedHolidayAccountDto> Accounts);
+
