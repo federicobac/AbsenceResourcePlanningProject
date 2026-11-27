@@ -40,4 +40,15 @@ public class HolidayRequestController(
             accountType,
             date));
     }
+
+    [HttpPost("funding-preview")]
+    public ActionResult<HolidayFundingPreviewDto> PreviewFunding(CreateHolidayRequestRequestDto dto)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId is null)
+            return Unauthorized();
+        
+        return Ok(service.PreviewFunding(userId, dto));
+    }
 }

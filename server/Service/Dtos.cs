@@ -61,3 +61,17 @@ public record ProjectedHolidayBalanceDto(
     decimal TotalHours,
     List<ProjectedHolidayAccountDto> Accounts
 );
+
+public record HolidayDebtRecoveryDto(
+    DateOnly RecoveryDeadline,
+    decimal ProjectedBalanceHours
+);
+
+public record HolidayFundingPreviewDto(
+    HolidayDeductionPreviewDto Deduction, 
+    decimal BalanceAfterRequestHours,
+    bool RequiresDebt,
+    decimal PeakDebtHours,
+    decimal DebtLimitHours,
+    List<HolidayDebtRecoveryDto> Recoveries
+);
