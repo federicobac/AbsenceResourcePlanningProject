@@ -47,7 +47,10 @@ public class HolidayAccrualService(
         return sixthWeekAnnualHours / 12m / daysInMonth;
     }
 
-    public decimal CalculateAccruedHours(string userId, string accountId, DateOnly throughDate)
+    public decimal CalculateAccruedHours(
+        string userId, 
+        string accountId, 
+        DateOnly throughDate)
     {
         var account = db.HolidayAccounts
             .FirstOrDefault(a =>
@@ -57,6 +60,15 @@ public class HolidayAccrualService(
         if (account is null)
             throw new ValidationException("Holiday account not found");
 
+        return CalculateAccruedHours(
+            userId, account, throughDate);
+    }
+
+    public decimal CalculateAccruedHours(
+        string userId,
+        HolidayAccount account,
+        DateOnly throughDate)
+    {
         var firstSchedule = db.WorkingSchedules
             .Where(s => s.UserId == userId)
             .OrderBy(s => s.ValidFrom)
@@ -84,7 +96,7 @@ public class HolidayAccrualService(
         {
             total += CalculateDailyAccrual(userId, account.AccountType, date);
         }
-        
+
         return total;
     }
 
