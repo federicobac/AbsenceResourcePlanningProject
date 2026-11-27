@@ -187,4 +187,156 @@ public class HolidayAccountService(
             .ToList()
             .Sum();
     }
+
+    public List<HolidayAccount> GetProjectionAccounts(string userId, DateOnly targetDate)
+    {
+        if (!db.Users.Any(u =>
+                u.UserId == userId &&
+                u.Role == UserRoles.Employee))
+            throw new ValidationException("Employee not found");
+
+        var accounts = db.HolidayAccounts
+            .Where(a => a.UserId == userId)
+            .ToList();
+        
+        // Earliest date for which both configuration system exist
+        var firstRules = db.GlobalRuleSets
+            .OrderBy(r => r.ValidFrom)
+            .FirstOrDefault();
+
+        var firstPreset = db.RulePresetPeriods
+            .OrderBy(p => p.ValidFrom)
+            .FirstOrDefault();
+
+        if (firstRules is null || firstPreset is null)
+            throw new ValidationException("Holiday configuration is missing");
+
+        var earliestDate =
+            firstRules.ValidFrom > firstPreset.ValidFrom
+                ? firstRules.ValidFrom
+                : firstPreset.ValidFrom;
+
+        if (targetDate < earliestDate)
+            return [];
+        
+        // Sample relevant earning years an configuration transitions
+        var dates = new HashSet<DateOnly>
+        {
+            targetDate,
+            earliestDate
+        };
+        
+        for (int i = 1; i < 3 && targetDate.Year > i; i++) 
+            dates.Add(targetDate.AddDays(-1));
+        
+        foreach (var rules in db.GlobalRuleSets
+                     .Where(r => r.ValidFrom <= targetDate)
+                     .ToList())
+        { 
+            dates.Add(rules.ValidFrom);
+        }
+        
+        foreach (var period in db.RulePresetPeriods
+                     .Where(p => p.ValidFrom <= targetDate)
+                     .ToList())
+        { 
+            dates.Add(period.ValidFrom);
+        }
+
+        foreach (var date in dates
+                     .Where(d => d >= earliestDate && d <= targetDate)
+                     .OrderBy(d => d))
+        {
+            var rules = globalRuleSetService
+                .GetApplicableRulesSet(date);
+
+            var preset = rulePresetService
+                .GetApplicablePreset(date);
+            
+            // Statutory
+            var statutoryStart = GetPeriodStart(
+                date,
+                rules.StatutoryEarningStartMonth,
+                rules.StatutoryEarningStartDay);
+
+            var statutoryEnd = statutoryStart
+                .AddYears(1)
+                .AddDays(-1);
+
+            var statutoryUsageEnd = GetNextDate(
+                statutoryEnd,
+                rules.StatutoryUsageEndMonth,
+                rules.StatutoryUsageEndDay);
+
+            AddCandidate(
+                HolidayAccount.Statutory,
+                statutoryStart,
+                statutoryEnd,
+                statutoryStart,
+                statutoryUsageEnd);
+            
+            // Sixth week
+            if (preset.RulePresetCode == RulePreset.KlSixthWeek)
+            {
+                var sixthStart = GetPeriodStart(
+                    date,
+                    rules.SixthWeekUsageStartMonth,
+                    rules.SixthWeekUsageStartDay);
+
+                var sixthEnd = sixthStart
+                    .AddYears(1)
+                    .AddDays(-1);
+
+                var usageStart = GetNextDate(
+                    sixthEnd.AddDays(1),
+                    rules.SixthWeekUsageStartMonth,
+                    rules.SixthWeekUsageStartDay);
+
+                var usageEnd = GetNextDate(
+                    usageStart,
+                    rules.SixthWeekUsageEndMonth,
+                    rules.SixthWeekUsageEndDay);
+                
+                AddCandidate(
+                    HolidayAccount.SixthWeek,
+                    sixthStart,
+                    sixthEnd,
+                    usageStart,
+                    usageEnd);
+            }
+        }
+
+        return accounts
+            .Where(a =>
+                a.UsagePeriodStart <= targetDate &&
+                a.UsagePeriodEnd >= targetDate)
+            .ToList();
+        
+        // Add an in-memory account only if the earning period is not already present
+        void AddCandidate(
+            string accountType,
+            DateOnly earningStart,
+            DateOnly earningEnd,
+            DateOnly usageStart,
+            DateOnly usageEnd)
+        {
+            if (accounts.Any(a =>
+                    a.AccountType == accountType &&
+                    a.EarningPeriodStart == earningStart))
+                return;
+            
+            accounts.Add(new HolidayAccount
+            {
+                HolidayAccountId = string.Empty,
+                UserId = userId,
+                AccountType = accountType,
+                
+                EarningPeriodStart = earningStart,
+                EarningPeriodEnd = earningEnd,
+                
+                UsagePeriodStart = usageStart,
+                UsagePeriodEnd = usageEnd
+            });
+        }
+    }
 }
