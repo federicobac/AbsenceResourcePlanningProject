@@ -43,7 +43,7 @@ public class HolidayBalanceProjectionService(
                 otherEntries = db.HolidayAccountEntries
                     .Where(e =>
                         e.HolidayAccountId == account.HolidayAccountId &&
-                        e.EntryType != "ACRUAL" &&
+                        e.EntryType != "ACCRUAL" &&
                         e.EffectiveDate <= date)
                     .Select(e => e.Hours)
                     .ToList()

@@ -220,7 +220,7 @@ public class HolidayAccountService(MyDatabaseConnection db, GlobalRuleSetService
             .OrderBy(p => p.ValidFrom)
             .FirstOrDefault();
         
-        if (firstRules is null || firstRules is null)
+        if (firstRules is null || firstPreset is null)
             throw new ValidationException("Holiday configuration is missing");
 
         var earliestDate =
