@@ -384,4 +384,50 @@ public class HolidayRequestService(
             .ToList();
     }
 
+    public List<HolidayRequestDto> GetPendingRequest()
+    {
+        return db.HolidayRequests
+            .Where(r=> r.Status == HolidayRequest.Pending)
+            .OrderBy(r=> r.CreatedAtUtc)
+            .ToList()
+            .Select(r => new HolidayRequestDto(r))
+            .ToList();
+    }
+
+    public HolidayRequestDto RejectRequest(
+        string requestId,
+        string accountantId,
+        RejectHolidayRequestRequestDto dto)
+    {
+        using var transaction = db.BeginTransaction();
+
+        if (!db.Users.Any(u =>
+                u.UserId == accountantId &&
+                u.Role == UserRoles.Accountant))
+        {
+            throw new ValidationException("Account not found");
+        }
+
+        var request = db.HolidayRequests
+            .FirstOrDefault(r =>
+                r.HolidayRequestId == requestId);
+        
+        if (request is null)
+            throw new ValidationException("Holiday not found");
+        
+        if(request.Status != HolidayRequest.Pending)
+            throw new ValidationException("Only pending holiday requests can be rejected");
+
+        request.Status = HolidayRequest.Rejected;
+
+        request.ReviewedByUserId = accountantId;
+        request.ReviewedAtUtc = DateTime.UtcNow;
+        
+        request.ReviewComment = dto.ReviewComment?.Trim();
+
+        db.Update(request);
+        transaction.Commit();
+        return new HolidayRequestDto(request);
+    }
+
 }

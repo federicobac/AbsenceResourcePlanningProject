@@ -27,7 +27,7 @@ public class HolidayRequest
     public DateTime CreatedAtUtc  { get; set; }
     
     public string? ReviewedByUserId { get; set; }
-    public DateOnly? ReviewedAtUtc { get; set; }
+    public DateTime? ReviewedAtUtc { get; set; }
     public string? ReviewComment { get; set; }
     
 }
