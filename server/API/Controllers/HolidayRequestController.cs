@@ -51,4 +51,26 @@ public class HolidayRequestController(
         
         return Ok(service.PreviewFunding(userId, dto));
     }
+
+    [HttpPost("submit")]
+    public ActionResult<HolidayRequestDto> SubmitRequest(CreateHolidayRequestRequestDto dto)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId is null)
+            return Unauthorized();
+        
+        return Ok(service.CreateRequest(userId, dto));
+    }
+    
+    [HttpGet("me")]
+    public ActionResult<List<HolidayRequestDto>> GetMyRequests()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId is null)
+            return Unauthorized();
+        
+        return Ok(service.GetMyRequests(userId));
+    }
 }

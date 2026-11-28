@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Infra;
+using LinqToDB;
 using Service.RequestDtos;
 using Service.Security;
 
@@ -335,5 +336,56 @@ public class HolidayRequestService(
             peakDebtHours,
             debtLimitHours,
             recoveries);
+    }
+
+    public HolidayRequestDto CreateRequest(
+        string userId,
+        CreateHolidayRequestRequestDto dto)
+    {
+        using var transaction = db.BeginTransaction();
+        
+        // Run all existing validations
+        var funding = PreviewFunding(userId, dto);
+
+        var request = new HolidayRequest
+        {
+            HolidayRequestId = Guid.NewGuid().ToString(),
+            UserId = userId,
+            AccountType = dto.AccountType,
+
+            StartDate = dto.StartDate,
+            EndDate = dto.EndDate,
+
+            RequestedHours = funding.Deduction.TotalHours,
+            Status = HolidayRequest.Pending,
+            Comment = dto.Comment,
+            CreatedAtUtc = DateTime.UtcNow,
+
+            ReviewedByUserId = null,
+            ReviewedAtUtc = null,
+            ReviewComment = null
+        };
+        
+        db.Insert(request);
+        
+        transaction.Commit();
+        
+        return new HolidayRequestDto(request);
+    }
+
+    public List<HolidayRequestDto> GetMyRequests(string userId)
+    {
+        if (!db.Users.Any(u =>
+                u.UserId == userId &&
+                u.Role == UserRoles.Employee))
+        { throw new ValidationException("Employee not found"); }
+
+        return db.HolidayRequests
+            .Where(r => r.UserId == userId)
+            .OrderByDescending(r => r.CreatedAtUtc)
+            .ThenByDescending(r => r.StartDate)
+            .ToList()
+            .Select(r => new HolidayRequestDto(r))
+            .ToList();
     }
 }
