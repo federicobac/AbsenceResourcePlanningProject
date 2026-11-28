@@ -9,6 +9,7 @@ namespace Service.RequestDtos;
     [
         nameof(HolidayRequest.HolidayRequestId),
         nameof(HolidayRequest.UserId),
+        nameof(HolidayRequest.RequestedHours),
         nameof(HolidayRequest.Status),
         nameof(HolidayRequest.CreatedAtUtc),
         nameof(HolidayRequest.ReviewedByUserId),
