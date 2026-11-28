@@ -368,7 +368,7 @@ public class HolidayRequestService(
 
     public List<HolidayRequestDto> GetMyRequest(string userId)
     {
-        if (db.Users.Any(u =>
+        if (!db.Users.Any(u =>
                 u.UserId == userId &&
                 u.Role == UserRoles.Employee))
         {
