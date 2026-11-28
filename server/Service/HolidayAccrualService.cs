@@ -84,7 +84,7 @@ public class HolidayAccrualService(
 
         var endDate = throughDate;
 
-        if (endDate > account.EarningPeriodStart)
+        if (endDate > account.EarningPeriodEnd)
             endDate = account.EarningPeriodEnd;
 
         if (endDate < startDate)
